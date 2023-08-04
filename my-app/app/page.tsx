@@ -4,6 +4,8 @@ import Image from 'next/image'
 import { useState } from 'react'
 import {deployNFT, deployMarketplace, deployNFTAirdrop, deployTicketQueue} from '../eth/deployer'
 
+
+
 export default function Home() {
   const [isMetamaskConnected, setIsMetamaskConnected] = useState(false);
   const [nftContractAddress, setNFTContractAddress] = useState("");
@@ -11,7 +13,16 @@ export default function Home() {
   const [nftAirdropContractAddress, setNFTAirdropContractAddress] = useState("");
   const [ticketQueueContractAddress, setTicketQueueContractAddress] = useState("");
 
-const downloadTxtFile = (contractName:string, contractAddress:string) => {
+  interface Ethereum {
+    request(args: any): Promise<any>;
+    // Add more properties and methods from the Ethereum provider API
+  }
+
+  interface Window {
+    ethereum?: Ethereum;
+  }
+
+  const downloadTxtFile = (contractName:string, contractAddress:string) => {
   const formattedContent = `Contract Address ${contractName}: ${contractAddress}`;
 
   const element = document.createElement('a');
@@ -89,11 +100,11 @@ const deployTicketQueueContract = async () => {
             <tbody>
               <tr>
                 <td>
-                  <button
+                <button
                     onClick={() => deployNFTContract(
-                      document.getElementById('nftName').value,
-                      document.getElementById('nftSymbol').value,
-                      document.getElementById('nftContractURI').value
+                      (document.getElementById('nftName')as HTMLInputElement).value,
+                      (document.getElementById('nftSymbol')as HTMLInputElement).value,
+                      (document.getElementById('nftContractURI')as HTMLInputElement).value
                     )}
                     className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
                   >
@@ -129,14 +140,14 @@ const deployTicketQueueContract = async () => {
                 <td>
                   <button
                     onClick={() => deployMarketPLaceContract(
-                      parseFloat(document.getElementById('marketplaceListPrice').value)
+                      parseFloat((document.getElementById('marketplaceListPrice') as HTMLInputElement).value)
                     )}
                     className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
                   >
                     Deploy Marketplace Contracts
                   </button>
                 </td>
-                <td colSpan="3">
+                <td colSpan={3}>
                   <input
                     type="number"
                     placeholder="List Price"
@@ -149,9 +160,9 @@ const deployTicketQueueContract = async () => {
                 <td>
                   <button
                     onClick={() => deployNFTAirdropContract(
-                      document.getElementById('nftAirdropName').value,
-                      document.getElementById('nftAirdropSymbol').value,
-                      document.getElementById('nftAirdropContractURI').value
+                      (document.getElementById('nftAirdropName') as HTMLInputElement).value,
+                      (document.getElementById('nftAirdropSymbol') as HTMLInputElement).value,
+                      (document.getElementById('nftAirdropContractURI')as HTMLInputElement).value
                     )}
                     className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 focus:outline-none focus:ring focus:ring-yellow-300"
                   >
@@ -184,7 +195,7 @@ const deployTicketQueueContract = async () => {
                 </td>
               </tr>
               <tr>
-                <td colSpan="4">
+                <td colSpan={4}>
                   <button
                     onClick={() => deployTicketQueueContract()}
                     className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
