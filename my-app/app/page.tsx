@@ -13,15 +13,6 @@ export default function Home() {
   const [nftAirdropContractAddress, setNFTAirdropContractAddress] = useState("");
   const [ticketQueueContractAddress, setTicketQueueContractAddress] = useState("");
 
-  interface Ethereum {
-    request(args: any): Promise<any>;
-    // Add more properties and methods from the Ethereum provider API
-  }
-
-  interface Window {
-    ethereum?: Ethereum;
-  }
-
   const downloadTxtFile = (contractName:string, contractAddress:string) => {
   const formattedContent = `Contract Address ${contractName}: ${contractAddress}`;
 
