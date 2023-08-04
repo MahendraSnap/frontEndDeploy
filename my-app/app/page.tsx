@@ -6,14 +6,16 @@ import {deployNFT, deployMarketplace, deployNFTAirdrop, deployTicketQueue} from 
 
 export default function Home() {
   const [isMetamaskConnected, setIsMetamaskConnected] = useState(false);
-  const [nftContractAddress, setNFTContractAddress] = useState(null);
-  const [marketplaceContractAddress, setMarketplaceContractAddress] = useState(null);
-  const [nftAirdropContractAddress, setNFTAirdropContractAddress] = useState(null);
-  const [ticketQueueContractAddress, setTicketQueueContractAddress] = useState(null);
+  const [nftContractAddress, setNFTContractAddress] = useState("");
+  const [marketplaceContractAddress, setMarketplaceContractAddress] = useState("");
+  const [nftAirdropContractAddress, setNFTAirdropContractAddress] = useState("");
+  const [ticketQueueContractAddress, setTicketQueueContractAddress] = useState("");
 
 const downloadTxtFile = (contractName:string, contractAddress:string) => {
+  const formattedContent = `Contract Address ${contractName}: ${contractAddress}`;
+
   const element = document.createElement('a');
-  const file = new Blob([contractAddress], { type: 'text/plain' });
+  const file = new Blob([formattedContent], { type: 'text/plain' });
   element.href = URL.createObjectURL(file);
   element.download = `${contractName}_address.txt`;
   document.body.appendChild(element);
@@ -24,7 +26,33 @@ const deployNFTContract = async (name:string, symbol:string, contractURI:string)
   try {
     const deployedAddress:any = await deployNFT(name, symbol, contractURI);
     setNFTContractAddress(deployedAddress);
-    console.log(nftContractAddress);
+  } catch (error) {
+    console.error('Error deploying NFT contract:', error);
+  }
+};
+
+const deployMarketPLaceContract = async (listPrice:number) => {
+  try {
+    const deployedAddress:any = await deployMarketplace(listPrice);
+    setMarketplaceContractAddress(deployedAddress);
+  } catch (error) {
+    console.error('Error deploying NFT contract:', error);
+  }
+};
+
+const deployNFTAirdropContract = async (name:string, symbol:string, contractURI:string) => {
+  try {
+    const deployedAddress:any = await deployNFTAirdrop(name, symbol, contractURI);
+    setNFTAirdropContractAddress(deployedAddress);
+  } catch (error) {
+    console.error('Error deploying NFT contract:', error);
+  }
+};
+
+const deployTicketQueueContract = async () => {
+  try {
+    const deployedAddress:any = await deployTicketQueue();
+    setTicketQueueContractAddress(deployedAddress);
   } catch (error) {
     console.error('Error deploying NFT contract:', error);
   }
@@ -99,19 +127,8 @@ const deployNFTContract = async (name:string, symbol:string, contractURI:string)
               </tr>
               <tr>
                 <td>
-                {nftContractAddress && (
-          <div className="mb-2">
-          <p>NFT Contract Address: {nftContractAddress}</p>
-          <button
-            onClick={() => downloadTxtFile('NFT', nftContractAddress)}
-            className="mt-2 px-2 py-1 bg-gray-300 text-black rounded-md hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-300"
-          >
-            Download Address
-          </button>
-        </div>
-      )}
                   <button
-                    onClick={() => deployMarketplace(
+                    onClick={() => deployMarketPLaceContract(
                       parseFloat(document.getElementById('marketplaceListPrice').value)
                     )}
                     className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
@@ -131,7 +148,7 @@ const deployNFTContract = async (name:string, symbol:string, contractURI:string)
               <tr>
                 <td>
                   <button
-                    onClick={() => deployNFTAirdrop(
+                    onClick={() => deployNFTAirdropContract(
                       document.getElementById('nftAirdropName').value,
                       document.getElementById('nftAirdropSymbol').value,
                       document.getElementById('nftAirdropContractURI').value
@@ -169,7 +186,7 @@ const deployNFTContract = async (name:string, symbol:string, contractURI:string)
               <tr>
                 <td colSpan="4">
                   <button
-                    onClick={() => deployTicketQueue()}
+                    onClick={() => deployTicketQueueContract()}
                     className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
                   >
                     Deploy TicketQueue Contract
@@ -178,6 +195,54 @@ const deployNFTContract = async (name:string, symbol:string, contractURI:string)
               </tr>
             </tbody>
           </table>
+          {nftContractAddress && (
+          <div className="mb-2">
+          <p>NFT Contract Address: {nftContractAddress}</p>
+          <button
+            onClick={() => downloadTxtFile('NFT', nftContractAddress)}
+            className="mt-2 px-2 py-1 bg-gray-300 text-black rounded-md hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-300"
+          >
+            Download Address
+          </button>
+          </div>
+          )}
+
+          {marketplaceContractAddress && (
+          <div className="mb-2">
+          <p>MarketPlaces Contract Address: {marketplaceContractAddress}</p>
+          <button
+            onClick={() => downloadTxtFile('Marketplace', marketplaceContractAddress)}
+            className="mt-2 px-2 py-1 bg-gray-300 text-black rounded-md hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-300"
+          >
+            Download Address
+          </button>
+          </div>
+          )}
+
+          {nftAirdropContractAddress && (
+          <div className="mb-2">
+          <p>NFT Airdrop Contract Address: {nftAirdropContractAddress}</p>
+          <button
+            onClick={() => downloadTxtFile('NFT-Airdrop', nftAirdropContractAddress)}
+            className="mt-2 px-2 py-1 bg-gray-300 text-black rounded-md hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-300"
+          >
+            Download Address
+          </button>
+          </div>
+          )}
+
+          {ticketQueueContractAddress && (
+          <div className="mb-2">
+          <p>TicketQueue Contract Address: {ticketQueueContractAddress}</p>
+          <button
+            onClick={() => downloadTxtFile('Ticket&Queue', ticketQueueContractAddress)}
+            className="mt-2 px-2 py-1 bg-gray-300 text-black rounded-md hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-300"
+          >
+            Download Address
+          </button>
+          </div>
+          )}
+
         </div>
       ) : (
         <button
