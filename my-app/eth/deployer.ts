@@ -5,7 +5,6 @@ const NFT = require('./artifacts/NFT.json');
 const NFTAirdrop = require('./artifacts/NFTAirdrop.json');
 const TicketQueue = require('./artifacts/TicketQueue.json');
 
-
 export const deployNFT = async function (_name:string, _symbol:string, _contractURI:string)  {
     if (window.ethereum) {
         const provider = await new ethers.BrowserProvider(window.ethereum);

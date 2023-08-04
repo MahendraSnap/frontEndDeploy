@@ -6,6 +6,29 @@ import {deployNFT, deployMarketplace, deployNFTAirdrop, deployTicketQueue} from 
 
 export default function Home() {
   const [isMetamaskConnected, setIsMetamaskConnected] = useState(false);
+  const [nftContractAddress, setNFTContractAddress] = useState(null);
+  const [marketplaceContractAddress, setMarketplaceContractAddress] = useState(null);
+  const [nftAirdropContractAddress, setNFTAirdropContractAddress] = useState(null);
+  const [ticketQueueContractAddress, setTicketQueueContractAddress] = useState(null);
+
+const downloadTxtFile = (contractName:string, contractAddress:string) => {
+  const element = document.createElement('a');
+  const file = new Blob([contractAddress], { type: 'text/plain' });
+  element.href = URL.createObjectURL(file);
+  element.download = `${contractName}_address.txt`;
+  document.body.appendChild(element);
+  element.click();
+};
+
+const deployNFTContract = async (name:string, symbol:string, contractURI:string) => {
+  try {
+    const deployedAddress:any = await deployNFT(name, symbol, contractURI);
+    setNFTContractAddress(deployedAddress);
+    console.log(nftContractAddress);
+  } catch (error) {
+    console.error('Error deploying NFT contract:', error);
+  }
+};
 
   const connectToMetamask = async () => {
     try {
@@ -39,7 +62,7 @@ export default function Home() {
               <tr>
                 <td>
                   <button
-                    onClick={() => deployNFT(
+                    onClick={() => deployNFTContract(
                       document.getElementById('nftName').value,
                       document.getElementById('nftSymbol').value,
                       document.getElementById('nftContractURI').value
@@ -76,6 +99,17 @@ export default function Home() {
               </tr>
               <tr>
                 <td>
+                {nftContractAddress && (
+          <div className="mb-2">
+          <p>NFT Contract Address: {nftContractAddress}</p>
+          <button
+            onClick={() => downloadTxtFile('NFT', nftContractAddress)}
+            className="mt-2 px-2 py-1 bg-gray-300 text-black rounded-md hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-300"
+          >
+            Download Address
+          </button>
+        </div>
+      )}
                   <button
                     onClick={() => deployMarketplace(
                       parseFloat(document.getElementById('marketplaceListPrice').value)
