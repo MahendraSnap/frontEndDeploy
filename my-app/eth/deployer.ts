@@ -8,12 +8,12 @@ export const deployMockAgg = async function (_price:number)  {
         const signer = await provider.getSigner();
         try {
             const factory = await new ethers.ContractFactory(MockAgregator.abi, MockAgregator.bytecode, signer);
-            const contract = await factory.deploy(ethers.formatUnits(_price.toString(), 8));
+            const contract = await factory.deploy(ethers.parseUnits(_price.toString(), 8));
             await contract.waitForDeployment();
-            console.log('NFT Contract deployed at:', await contract.getAddress());
+            console.log('MockAgg Contract deployed at:', await contract.getAddress());
             return await contract.getAddress();
         } catch (error) {
-            console.error('Error deploying NFT contract:', error);
+            console.error('Error deploying MockAgg contract:', error);
         }
     } else {
         console.error('Metamask not found or not connected.');
