@@ -8,7 +8,7 @@ export const deployMockAgg = async function (_price:number)  {
         const signer = await provider.getSigner();
         try {
             const factory = await new ethers.ContractFactory(MockAgregator.abi, MockAgregator.bytecode, signer);
-            const contract = await factory.deploy(ethers.parseEther(_price.toString()));
+            const contract = await factory.deploy(ethers.formatUnits(_price.toString(), 8));
             await contract.waitForDeployment();
             console.log('NFT Contract deployed at:', await contract.getAddress());
             return await contract.getAddress();
