@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
-import {deployAggregator, UpdateApprovedAddress, ViewApprovedAddress} from '../eth/Aggregator'
+import {deployAggregator, UpdateApprovedAddress, ViewApprovedAddress, ViewLatestAnswer} from '../eth/Aggregator'
 
 
 
@@ -11,6 +11,7 @@ export default function Home() {
   const [nftContractAddress, setNFTContractAddress] = useState("");
   const [nameDeployer, setnameDeployer] = useState("");
   const [approvedAddress, setApprovedAddress] = useState("");
+  const [latestAnswer, setLatestAnswer] = useState("");
 
   const downloadTxtFile = (contractName:string, contractAddress:string) => {
   const formattedContent = `Contract Address ${contractName}: ${contractAddress}`;
@@ -36,6 +37,14 @@ const deployAggregatorContract = async (price:number, name:string) => {
 const getAggregatorApprovedAddress = async (ContractAddress:string) => {
   try {
     setApprovedAddress(await ViewApprovedAddress(ContractAddress));
+  } catch (error) {
+    console.error('Error deploying NFT contract:', error);
+  }
+};
+
+const getAggregatorLatestAnswer = async (ContractAddress:string) => {
+  try {
+    setLatestAnswer(await ViewLatestAnswer(ContractAddress));
   } catch (error) {
     console.error('Error deploying NFT contract:', error);
   }
@@ -106,7 +115,34 @@ const getAggregatorApprovedAddress = async (ContractAddress:string) => {
           <p>thanks {nameDeployer}! 
             Aggregator Contract Address: {nftContractAddress}</p>
           </div>
-          )}
+            )}
+            <tbody>
+              <tr>
+                <td>
+                <button
+                    onClick={() => getAggregatorLatestAnswer(
+                      (document.getElementById('ContractAddressAA')as HTMLInputElement).value
+                    )}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                  >
+                    View latest Answer
+                  </button>
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Contract Address"
+                    className="px-4 py-2 bg-grey-100 text-black rounded-md"
+                    id="ContractAddressAA"
+                  />
+                </td>
+              </tr>
+                {latestAnswer && (
+                  <div className="mb-2">
+                  <p>: {latestAnswer}</p>
+                  </div>
+                )}
+            </tbody>
             <tbody>
               <tr>
                 <td>

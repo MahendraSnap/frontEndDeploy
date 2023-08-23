@@ -8,7 +8,7 @@ export const deployAggregator = async function (_price:number)  {
         const signer = await provider.getSigner();
         try {
             const factory = new ethers.ContractFactory(Aggregator.abi, Aggregator.bytecode, signer);
-            const contract = await factory.deploy(ethers.parseEther(_price.toString()));
+            const contract = await factory.deploy(ethers.parseUnits(_price.toString(), 8));
             await contract.waitForDeployment();
             console.log('Aggregator Contract deployed at:', await contract.getAddress());
             return await contract.getAddress();
@@ -59,6 +59,21 @@ export const ViewApprovedAddress = async function (contractAddress:string)  {
             const approvedAddress = await contract.approved();
             //console.log('this Contract Approved Address:', approvedAddress);
             return approvedAddress;
+        } catch (error) {
+            console.error('Error fetch Approved Address from contract:', error);
+        }
+    } else {
+        console.error('Metamask not found or not connected.');
+    }
+}
+
+export const ViewLatestAnswer = async function (contractAddress:string)  {
+    if (window.ethereum) {
+        const contract = await getAggregator(contractAddress);
+        try {
+            const LatestAnswer = ethers.formatUnits((await contract.latestAnswer()).toString(), 8);
+            //console.log('this Contract Approved Address:', LatestAnswer);
+            return LatestAnswer;
         } catch (error) {
             console.error('Error fetch Approved Address from contract:', error);
         }
