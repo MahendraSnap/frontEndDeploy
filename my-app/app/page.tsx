@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
-import {deployMockAgg} from '../eth/deployer'
+import {deployAggregator, UpdateApprovedAddress, ViewApprovedAddress} from '../eth/Aggregator'
 
 
 
@@ -10,6 +10,7 @@ export default function Home() {
   const [isMetamaskConnected, setIsMetamaskConnected] = useState(false);
   const [nftContractAddress, setNFTContractAddress] = useState("");
   const [nameDeployer, setnameDeployer] = useState("");
+  const [approvedAddress, setApprovedAddress] = useState("");
 
   const downloadTxtFile = (contractName:string, contractAddress:string) => {
   const formattedContent = `Contract Address ${contractName}: ${contractAddress}`;
@@ -22,15 +23,24 @@ export default function Home() {
   element.click();
 };
 
-const deployMockAggContract = async (price:number, name:string) => {
+const deployAggregatorContract = async (price:number, name:string) => {
   try {
-    const deployedAddress:any = await deployMockAgg(price);
+    const deployedAddress:any = await deployAggregator(price);
     setnameDeployer(name);
     setNFTContractAddress(deployedAddress);
   } catch (error) {
     console.error('Error deploying NFT contract:', error);
   }
 };
+
+const getAggregatorApprovedAddress = async (ContractAddress:string) => {
+  try {
+    setApprovedAddress(await ViewApprovedAddress(ContractAddress));
+  } catch (error) {
+    console.error('Error deploying NFT contract:', error);
+  }
+};
+
 
   const connectToMetamask = async () => {
     try {
@@ -64,13 +74,13 @@ const deployMockAggContract = async (price:number, name:string) => {
               <tr>
                 <td>
                 <button
-                    onClick={() => deployMockAggContract(
+                    onClick={() => deployAggregatorContract(
                       parseFloat((document.getElementById('price') as HTMLInputElement).value),
                       (document.getElementById('Name')as HTMLInputElement).value
                     )}
                     className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
                   >
-                    Deploy MockAgg
+                    Deploy Aggregator
                   </button>
                 </td>
                 <td>
@@ -91,15 +101,71 @@ const deployMockAggContract = async (price:number, name:string) => {
                 </td>
               </tr>
             </tbody>
-          </table>
-
-          {nftContractAddress && (
+            {nftContractAddress && (
           <div className="mb-2">
           <p>thanks {nameDeployer}! 
-            MockAgg Contract Address: {nftContractAddress}</p>
+            Aggregator Contract Address: {nftContractAddress}</p>
           </div>
           )}
-
+            <tbody>
+              <tr>
+                <td>
+                <button
+                    onClick={() => UpdateApprovedAddress(
+                      (document.getElementById('ContractAddress')as HTMLInputElement).value,
+                      (document.getElementById('NewApprovedAddress')as HTMLInputElement).value
+                    )}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                  >
+                    Change Approved Address
+                  </button>
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Contract Address"
+                    className="px-4 py-2 bg-grey-100 text-black rounded-md"
+                    id="ContractAddress"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="New Approved Address"
+                    className="px-4 py-2 bg-grey-100 text-black rounded-md"
+                    id="NewApprovedAddress"
+                  />
+                </td>
+              </tr>
+            </tbody>
+            <tbody>
+              <tr>
+                <td>
+                <button
+                    onClick={() => getAggregatorApprovedAddress(
+                      (document.getElementById('ContractAddressA')as HTMLInputElement).value
+                    )}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                  >
+                    View Approved Address
+                  </button>
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="Contract Address"
+                    className="px-4 py-2 bg-grey-100 text-black rounded-md"
+                    id="ContractAddressA"
+                  />
+                </td>
+              </tr>
+              {approvedAddress && (
+          <div className="mb-2">
+          <p>Aggregator Contract, Approved Address: {approvedAddress}</p>
+          </div>
+          )}
+            </tbody>
+          </table>
         </div>
       ) : (
         <button
